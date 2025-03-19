@@ -99,6 +99,7 @@ public class ImageService {
 	public Image editById(String id, AuthorRequest request) {
 		Image image = getImageById(id);
 		image.setAuthor(request.getName());
+		imageDynamoDbTable.updateItem(image);
 		return image;
 	}
 }
