@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -58,19 +60,19 @@ public class ImageService {
 						.build(), RequestBody.fromBytes(img));
 
 		String url = s3Client.utilities().getUrl(GetUrlRequest.builder().bucket(BUCKET_NAME).key(fileName).build()).toString();
-		LocalDateTime time = LocalDateTime.now();
+		Instant times = Instant.now();
 
-		addToDatabase(uuid, fileName, url, size, time);
+		addToDatabase(uuid, fileName, url, size, times);
 		return 1L;
 	}
 
-	public void addToDatabase(String uuid, String fileName, String url, Long size, LocalDateTime time) {
+	public void addToDatabase(String uuid, String fileName, String url, Long size, Instant times) {
 		imageDynamoDbTable.putItem(Image.builder()
 						.id(uuid)
 						.name(fileName)
 						.url(url)
 						.size(size)
-						.time(time)
+						.time(LocalDateTime.ofInstant(times, ZoneId.of("Asia/Ho_Chi_Minh")))
 						.author("Anonymous")
 						.build());
 	}
